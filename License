@@ -1,0 +1,44 @@
+
+
+
+---
+
+## 📄 `CREDITS.md`
+
+```markdown
+# Credits & Acknowledgements
+
+## Author
+**Zeelladani**
+- Website: [zeelladani.in](https://zeelladani.in)
+- Email: info@zeelladani.in
+- Alt: zeelladani129@gmail.com, info@zeelladani.in
+
+## Inspiration
+- **Unsplash** — for the reference aesthetic (dark sphere with copper wire frame)
+- **Glassmorphism design community** — for the frosted glass UI patterns
+- **Bento grid layout** — popularized by Apple, Linear, Vercel
+
+## Standards & Data Sources
+- **NFPA 70 (NEC 2023)** — National Electrical Code
+- **ASHRAE 90.1** — Energy Standard for Buildings
+- **NFPA 70E** — Electrical Safety in the Workplace
+- **IEC 60364** — Low-voltage electrical installations
+- **IEC 62305** — Protection against lightning
+- **IEEE 1584** — Arc flash hazard calculations
+
+## Fonts
+- **Inter** — by Rasmus Andersson ([rsms.me/inter](https://rsms.me/inter)) — SIL Open Font License
+- System font stack fallback (system-ui, -apple-system, Segoe UI)
+
+## Open-source code
+This project uses **no third-party libraries**. All code is hand-written.
+
+## Special thanks
+- The **COE community** — for shaping what tools matter most
+- Everyone who has submitted bug reports and feature requests
+
+## Disclaimer
+This software is provided as-is for educational and preliminary design purposes.
+Always verify results against the latest published standards and consult a
+licensed Professional Engineer before using in construction documents.
