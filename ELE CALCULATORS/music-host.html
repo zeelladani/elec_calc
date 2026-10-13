@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Music Host</title>
+<style>html,body{margin:0;padding:0;background:#000;height:100%;overflow:hidden}</style>
+</head>
+<body>
+<audio id="player" loop preload="auto" src="music/ambient.mp3"></audio>
+<script>
+  const player = document.getElementById('player');
+
+  function readShared(k, fb){ try { return localStorage.getItem(k) ?? fb; } catch(e){ return fb; } }
+  function writeShared(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+  function readSession(k, fb){ try { return sessionStorage.getItem(k) ?? fb; } catch(e){ return fb; } }
+  function writeSession(k, v){ try { sessionStorage.setItem(k, v); } catch(e){} }
+
+  player.volume = parseInt(readShared('zc-music-volume', '35'), 10) / 100;
+  const startMuted = readShared('zc-music-muted', '0') === '1';
+  const savedTime = parseFloat(readSession('zc-music-time', '0'));
+
+  player.addEventListener('loadedmetadata', () => {
+    if (savedTime > 0 && savedTime < player.duration - 2){
+      try { player.currentTime = savedTime; } catch(e){}
+    }
+  });
+
+  setInterval(() => {
+    if (!player.paused && !player.ended){
+      writeSession('zc-music-time', player.currentTime.toFixed(2));
+    }
+  }, 1000);
+
+  function reply(state){
+    parent.postMessage({
+      type:'zc-music-state',
+      playing: state?.playing ?? !player.paused,
+      volume: Math.round(player.volume * 100),
+      error: state?.error || false,
+    }, '*');
+  }
+
+  window.addEventListener('message', function(e){
+    const d = e.data || {};
+    if (d.type !== 'zc-music') return;
+
+    if (d.action === 'play'){
+      player.play().then(() => {
+        writeShared('zc-music-muted', '0');
+        reply({ playing:true });
+      }).catch(() => reply({ playing:false, error:true }));
+    }
+    else if (d.action === 'pause'){
+      player.pause();
+      writeShared('zc-music-muted', '1');
+      reply({ playing:false });
+    }
+    else if (d.action === 'toggle'){
+      if (player.paused){
+        player.play().then(() => {
+          writeShared('zc-music-muted', '0');
+          reply({ playing:true });
+        }).catch(() => reply({ playing:false, error:true }));
+      } else {
+        player.pause();
+        writeShared('zc-music-muted', '1');
+        reply({ playing:false });
+      }
+    }
+    else if (d.action === 'volume'){
+      const v = Math.max(0, Math.min(100, parseInt(d.value, 10) || 0));
+      player.volume = v / 100;
+      writeShared('zc-music-volume', v);
+      reply();
+    }
+    else if (d.action === 'query'){
+      reply();
+    }
+  });
+
+  window.addEventListener('load', () => {
+    parent.postMessage({ type:'zc-music-ready' }, '*');
+    if (!startMuted){
+      player.play().catch(() => {});
+    }
+  });
+
+  setTimeout(() => parent.postMessage({ type:'zc-music-ready' }, '*'), 100);
+  setTimeout(() => parent.postMessage({ type:'zc-music-ready' }, '*'), 800);
+</script>
+</body>
+</html>
